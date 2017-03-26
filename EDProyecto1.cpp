@@ -23,19 +23,7 @@ class lista{
 		med=NULL;
 		ult=NULL;
 	}
-	
-	void eliminarLista(){
-		nodo *aux=NULL;
-		while(prim!=NULL){
-			aux=prim;
-			prim=prim->prox;
-			delete aux;
-		}
-		med=NULL;
-		ult=NULL;
-		espadas=0;
-	}
-	
+		
 	void insertar(int v){
 		nodo *n=new nodo;
 		n->marca=v;
@@ -44,21 +32,15 @@ class lista{
 			prim=n;
 			med=n;
 			ult=n;
-		}else if(prim==ult){
-			prim->prox=n;
-			n->ant=prim;
+		}else if(prim==ult or espadas%2!=1){
+			ult->prox=n;
+			n->ant=ult;
 			ult=n;
 		}else{
-			if(espadas%2!=1){
-				ult->prox=n;
-				n->ant=ult;
-				ult=n;
-			}else{
-				ult->prox=n;
-				n->ant=ult;
-				med=med->prox;
-				ult=n;
-			}
+			ult->prox=n;
+			n->ant=ult;
+			med=med->prox;
+			ult=n;
 		}
 		espadas++;
 	}
@@ -70,51 +52,71 @@ class lista{
 			med=NULL;
 			ult=NULL;
 			delete aux;
+		}else if(espadas==2 or espadas%2==1){
+			ult=ult->ant;
+			ult->prox=NULL;
+			delete aux;
 		}else{
 			ult=ult->ant;
 			ult->prox=NULL;
+			med=med->ant;
 			delete aux;
 		}
 		espadas--;
 	}
+	
+	void reordenar(){
+		nodo *aux=ult;
+		if(espadas==1){
+		}else if(espadas%2!=1){
+			ult=med;
+			aux->prox=prim;
+			prim->ant=aux;
+			prim=med->prox;
+			med=aux;
+			ult->prox=NULL;
+			prim->ant=NULL;			
+		}else{
+			ult=med;
+			aux->prox=prim;
+			prim->ant=aux;
+			prim=med->prox;
+			med=aux->ant;
+			ult->prox=NULL;
+			prim->ant=NULL;
+		}
+	}
 		
 	void mostrar(){
-		cout<<"primero "<<prim->marca<<endl;
-		cout<<"medio "<<med->marca<<endl;
-		cout<<"ultimo "<<ult->marca<<endl;
+		nodo *aux=prim;
+		cout<<espadas<<endl;
+		while(aux){
+			cout<<aux->marca<<" ";
+			aux=aux->prox;
+		}
 	}
 };
 
 int main(){
 	string ins;
-	int espada, toma;
-	espada=-1;
-	toma =0;
+	int n, i, espada;
 	lista coleccion;
-	do{
-		cin>>ins;
-		if(ins=="insertar"){
-			cin>>espada;
-			coleccion.insertar(espada);
-		}else if(ins=="tomar"){
-			coleccion.tomar();
-			toma=toma+1;
-		}else if(ins!="insertar" and ins!="tomar" and ins!="terminado"){
-			cout<<"escribir bien"<<endl;
+	i=0;
+	cin>>n;
+	if(n<=1000000)
+	{
+		while(i<n){
+			cin>>ins;
+			if(ins=="insertar"){
+				cin>>espada;
+				coleccion.insertar(espada);
+			}else if(ins=="tomar"){
+				coleccion.tomar();
+			}else if(ins=="reordenar"){
+				coleccion.reordenar();
+			}
+			i++;
 		}
-	}while(ins!="terminado");
-	if(espada!=-1 or toma>1){
 		coleccion.mostrar();
 	}
-	coleccion.eliminarLista();
 };
-
-
-
-
-
-
-
-
-
-
